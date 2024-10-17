@@ -16,12 +16,15 @@ branch_vars = {key: value for key, value in env_vars.items() if '_BRANCH' in key
 # 打印结果
 for key, value in branch_vars.items():
     print(f"{key}: {value}")
- 
-print("PROJECT_LIST: " + env_vars.get('PROJECT_LIST'))
-print("NS: " + str(env_vars.get('NS')))
-print("ENV_NAME: " + str(env_vars.get('ENV_NAME')))
-print("TIME: " + str(env_vars.get('TIME')))
-print("BRANCH_INFO_BASE64: " + str(env_vars.get('BRANCH_INFO_BASE64')))
+
+projects = str(env_vars.get('PROJECT_LIST'))
+print("PROJECT_LIST: " + projects)
+pid = str(env_vars.get('NS'))
+print("NS: " + pid)
+traffic = str(env_vars.get('ENV_NAME'))
+print("ENV_NAME: " + traffic)
+vars_base64 = str(env_vars.get('BRANCH_INFO_BASE64'))
+print("BRANCH_INFO_BASE64: " + vars_base64)
 vars = base64.b64decode(str(env_vars.get('BRANCH_INFO_BASE64'))).decode('utf-8')
 print("vars: " + str(vars))
 gp.pipelines.create({'ref': 'master', 'variables': [{'key': 'PROJECT_LIST', 'value': projects},{'key': 'NS', 'value': pid},{'key': 'ENV_NAME', 'value': traffic},{'key': 'TIME', 'value': datetime.datetime.now().strftime("%Y%m%d%H%M%S")}, {'key': 'BRANCH_INFO_BASE64', 'value': vars_base64}] + vars})
