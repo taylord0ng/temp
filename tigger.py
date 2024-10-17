@@ -5,7 +5,7 @@ import gitlab
 env_vars = os.environ
 if len(sys.argv) > 2:
     gl = gitlab.Gitlab(private_token=sys.argv[1])
-    gp = self.gl.projects.get(sys.argv[2])
+    gp = gl.projects.get(sys.argv[2])
 else:
     print("No arguments private_token were provided.")
     exit(255)
