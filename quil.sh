@@ -1,3 +1,5 @@
+# curl https://raw.githubusercontent.com/taylord0ng/temp/refs/heads/master/quil.sh|bash -
+
 release_os="linux"
 release_arch="amd64"
 cd ~/ceremonyclient/node
