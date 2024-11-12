@@ -1,4 +1,4 @@
-import os,sys,base64,datetime,json
+import os,sys,base64,datetime,json,requests
 import gitlab
 
 # 获取所有环境变量
@@ -25,7 +25,31 @@ traffic = str(env_vars.get('ENV_NAME'))
 print("ENV_NAME: " + traffic)
 vars_base64 = str(env_vars.get('BRANCH_INFO_BASE64'))
 print("BRANCH_INFO_BASE64: " + vars_base64)
+dingtalk_token = str(env_vars.get('OPS_DINGTALK'))
 vars = base64.b64decode(str(env_vars.get('BRANCH_INFO_BASE64'))).decode('utf-8')
 print("vars: " + str(vars))
 vars_json = json.loads(str(vars).replace("'",'"'))
-gp.pipelines.create({'ref': 'master', 'variables': [{'key': 'PROJECT_LIST', 'value': projects},{'key': 'NS', 'value': pid},{'key': 'ENV_NAME', 'value': traffic},{'key': 'TIME', 'value': datetime.datetime.now().strftime("%Y%m%d%H%M%S")}, {'key': 'BRANCH_INFO_BASE64', 'value': vars_base64}] + vars_json})
+result = gp.pipelines.create({'ref': 'master', 'variables': [{'key': 'PROJECT_LIST', 'value': projects},{'key': 'NS', 'value': pid},{'key': 'ENV_NAME', 'value': traffic},{'key': 'TIME', 'value': datetime.datetime.now().strftime("%Y%m%d%H%M%S")}, {'key': 'BRANCH_INFO_BASE64', 'value': vars_base64}] + vars_json})
+if result.web_url: 
+    url = 'https://oapi.dingtalk.com/robot/send?access_token=' + dingtalk_token
+    HEADERS = {
+        "Content-Type": "application/json ;charset=utf-8 "
+    }
+    message = str(pid) + '\n' + str(traffic) + '\n' + str(projects) + '\n' + str(result.web_url)
+    String_textMsg = {
+        "msgtype": "text",
+        "text": {"content": message},
+        "at": {
+            "atMobiles": [],
+            "atUserIds": [],
+            "isAtAll": False
+        }
+    }
+    String_textMsg = json.dumps(String_textMsg)
+    res = requests.post(url, data=String_textMsg, headers=HEADERS)
+    print(res.text)
+    
+
+
+
+
